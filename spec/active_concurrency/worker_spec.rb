@@ -54,6 +54,23 @@ RSpec.describe ActiveConcurrency::Worker do
     end
   end
 
+  describe '.status' do
+    it 'returns "run" status' do
+      expect(worker.status).to eq('run')
+    end
+
+    it 'returns false status' do
+      Thread.new do
+        enqueue_jobs(2)
+        worker.done
+      end
+
+      worker.join
+
+      expect(worker.status).to eq(false)
+    end
+  end
+
   def enqueue_jobs(number_of_jobs)
     number_of_jobs.times do |n|
       worker << -> { results.push("job_#{n}") }

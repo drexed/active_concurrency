@@ -20,32 +20,52 @@ RSpec.describe ActiveConcurrency::WorkerPool do
 
   describe '.clear' do
     it 'returns hash with 0 workers' do
-      enqueue_pool(2)
+      enqueue_pool_jobs(2)
       pool.clear
 
-      expect(pool.size).to eq(result_pool)
+      expect(pool.sizes).to eq(result_pool)
     end
   end
 
-  describe '.size' do
+  describe '.sizes' do
     it 'returns hash with 10 enqueued workers and 0 jobs' do
-      expect(pool.size).to eq(result_pool)
+      expect(pool.sizes).to eq(result_pool)
     end
 
     it 'returns hash with 10 enqueued workers and 2 jobs' do
-      enqueue_pool(2)
+      enqueue_pool_jobs(2)
 
       result_pool['worker_0'] = 1
       result_pool['worker_1'] = 1
 
-      expect(pool.size).to eq(result_pool)
+      expect(pool.sizes).to eq(result_pool)
+    end
+  end
+
+  describe '.statuses' do
+    it 'returns hash with 10 enqueued workers and "run" status' do
+      result_pool.map { |k, v| result_pool[k] = 'run' }
+
+      expect(pool.statuses).to eq(result_pool)
+    end
+
+    it 'returns hash with 10 enqueued workers and false status' do
+      Thread.new do
+        enqueue_pool_jobs(2)
+        pool.done
+      end
+
+      pool.wait
+      result_pool.map { |k, v| result_pool[k] = false }
+
+      expect(pool.statuses).to eq(result_pool)
     end
   end
 
   describe '.wait' do
     it 'returns a hash all fib sequences from 0 to 29' do
       Thread.new do
-        enqueue_pool(30)
+        enqueue_pool_jobs(30)
         pool.done
       end
 
@@ -66,7 +86,7 @@ RSpec.describe ActiveConcurrency::WorkerPool do
     n < 2 ? n : fib(n - 1) + fib(n - 2)
   end
 
-  def enqueue_pool(number_of_pools)
+  def enqueue_pool_jobs(number_of_pools)
     number_of_pools.times do |n|
       pool << -> { results[n] = fib(n) }
     end

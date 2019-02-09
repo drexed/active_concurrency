@@ -28,18 +28,29 @@ module ActiveConcurrency
 
     alias_method :<<, :enqueue
 
-    def size
+    def join
+      @workers.map(&:join)
+    end
+
+    alias_method :execute, :join
+    alias_method :wait, :join
+
+    def sizes
       @workers.each_with_object({}) do |w, h|
         h[w.name] = w.size
       end
     end
 
+    alias_method :lengths, :sizes
+
     def shutdown
       @workers.map(&:done)
     end
 
-    def wait
-      @workers.map(&:join)
+    def statuses
+      @workers.each_with_object({}) do |w, h|
+        h[w.name] = w.status
+      end
     end
 
     private

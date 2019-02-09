@@ -35,8 +35,16 @@ module ActiveConcurrency
       @thread.join
     end
 
+    alias_method :execute, :join
+
     def size
       @queue.size
+    end
+
+    alias_method :length, :size
+
+    def status
+      @thread.status
     end
 
     private
