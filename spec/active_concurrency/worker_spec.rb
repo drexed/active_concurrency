@@ -9,10 +9,17 @@ RSpec.describe ActiveConcurrency::Worker do
   describe '.clear' do
     it 'returns hash with zero workers' do
       enqueue_jobs(2)
-
       worker.clear
 
       expect(worker.size).to eq(0)
+    end
+  end
+
+  describe '.done' do
+    it 'returns 1 enqueued job' do
+      worker.done
+
+      expect(worker.size).to eq(1)
     end
   end
 
@@ -20,7 +27,7 @@ RSpec.describe ActiveConcurrency::Worker do
     it 'returns an array with all "job_*" in it' do
       Thread.new do
         enqueue_jobs(2)
-        worker << :done
+        worker.done
       end
 
       worker.join

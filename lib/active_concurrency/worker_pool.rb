@@ -16,6 +16,10 @@ module ActiveConcurrency
       @workers.map(&:clear)
     end
 
+    def done
+      enqueue(:done)
+    end
+
     def enqueue(job)
       return shutdown if job == :done
 
@@ -31,7 +35,7 @@ module ActiveConcurrency
     end
 
     def shutdown
-      @workers.map { |w| w << :done }
+      @workers.map(&:done)
     end
 
     def wait

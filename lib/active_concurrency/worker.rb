@@ -19,6 +19,12 @@ module ActiveConcurrency
       @queue.pop
     end
 
+    def done
+      enqueue(:done)
+    end
+
+    alias_method :shutdown, :done
+
     def enqueue(job)
       @queue << job
     end

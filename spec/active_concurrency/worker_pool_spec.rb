@@ -3,8 +3,10 @@
 require 'spec_helper'
 
 RSpec.describe ActiveConcurrency::WorkerPool do
-  let(:scheduler) { ActiveConcurrency::Schedulers::RoundRobin }
-  let(:pool) { ActiveConcurrency::WorkerPool.new(10, scheduler) }
+  let(:scheduler) do
+    { type: ActiveConcurrency::Schedulers::RoundRobin }
+  end
+  let(:pool) { ActiveConcurrency::WorkerPool.new(10, scheduler: scheduler) }
   let(:results) { {} }
 
   let(:result_pool) do
@@ -19,7 +21,6 @@ RSpec.describe ActiveConcurrency::WorkerPool do
   describe '.clear' do
     it 'returns hash with 0 workers' do
       enqueue_pool(2)
-
       pool.clear
 
       expect(pool.size).to eq(result_pool)
@@ -45,7 +46,7 @@ RSpec.describe ActiveConcurrency::WorkerPool do
     it 'returns a hash all fib sequences from 0 to 29' do
       Thread.new do
         enqueue_pool(30)
-        pool << :done
+        pool.done
       end
 
       pool.wait
