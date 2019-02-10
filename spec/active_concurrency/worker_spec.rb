@@ -71,10 +71,4 @@ RSpec.describe ActiveConcurrency::Worker do
     end
   end
 
-  def enqueue_jobs(number_of_jobs)
-    number_of_jobs.times do |n|
-      worker << -> { results.push("job_#{n}") }
-    end
-  end
-
 end
