@@ -14,7 +14,7 @@ module ActiveConcurrency
         end
       end
 
-      def enqueue(job)
+      def schedule(job)
         worker = @pool[job.topic].sort_by(&:size).first
         worker << job
       end

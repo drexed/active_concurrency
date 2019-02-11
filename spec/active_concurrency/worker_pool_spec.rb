@@ -3,24 +3,16 @@
 require 'spec_helper'
 
 RSpec.describe ActiveConcurrency::WorkerPool do
-  let(:scheduler) do
-    { type: ActiveConcurrency::Schedulers::RoundRobin }
-  end
-  let(:pool) { ActiveConcurrency::WorkerPool.new(10, scheduler: scheduler) }
+  let(:pool) { ActiveConcurrency::WorkerPool.new(size: 10) }
   let(:results) { {} }
 
   let(:result_pool) do
-    {
-      'worker_0'=>0, 'worker_1'=>0, 'worker_2'=>0,
-      'worker_3'=>0, 'worker_4'=>0, 'worker_5'=>0,
-      'worker_6'=>0, 'worker_7'=>0, 'worker_8'=>0,
-      'worker_9'=>0
-    }
+    (0..9).each_with_object({}) { |n, h| h["worker_#{n}"] = 0 }
   end
 
   describe '.clear' do
     it 'returns hash with 0 workers' do
-      enqueue_pool_jobs(2)
+      schedule_pool_jobs(2)
       pool.clear
 
       expect(pool.sizes).to eq(result_pool)
@@ -28,48 +20,46 @@ RSpec.describe ActiveConcurrency::WorkerPool do
   end
 
   describe '.sizes' do
-    it 'returns hash with 10 enqueued workers and 0 jobs' do
+    it 'returns hash with 10 scheduled workers and 0 jobs' do
       expect(pool.sizes).to eq(result_pool)
     end
 
-    it 'returns hash with 10 enqueued workers and 2 jobs' do
-      enqueue_pool_jobs(2)
-
-      result_pool['worker_0'] = 1
-      result_pool['worker_1'] = 1
+    it 'returns hash with 10 scheduled workers and 2 jobs' do
+      schedule_pool_jobs(2)
+      update_result_hash(result_pool, '=', 1, break_i: 1)
 
       expect(pool.sizes).to eq(result_pool)
     end
   end
 
   describe '.statuses' do
-    it 'returns hash with 10 enqueued workers and "run" status' do
-      result_pool.map { |k, v| result_pool[k] = 'run' }
+    it 'returns hash with 10 scheduled workers and "run" status' do
+      update_result_hash(result_pool, '=', 'run')
 
       expect(pool.statuses).to eq(result_pool)
     end
 
-    it 'returns hash with 10 enqueued workers and false status' do
+    it 'returns hash with 10 scheduled workers and false status' do
       Thread.new do
-        enqueue_pool_jobs(2)
-        pool.done
+        schedule_pool_jobs(2)
+        pool.exit
       end
 
-      pool.wait
-      result_pool.map { |k, v| result_pool[k] = false }
+      pool.join
+      update_result_hash(result_pool, '=', false)
 
       expect(pool.statuses).to eq(result_pool)
     end
   end
 
-  describe '.wait' do
+  describe '.join' do
     it 'returns a hash all fib sequences from 0 to 29' do
       Thread.new do
-        enqueue_pool_jobs(30)
-        pool.done
+        schedule_pool_jobs(30)
+        pool.exit
       end
 
-      pool.wait
+      pool.join
 
       expect(results).to eq({
         0=>0, 1=>1, 2=>1, 3=>2, 4=>3,

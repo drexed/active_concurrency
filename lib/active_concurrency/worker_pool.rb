@@ -16,8 +16,8 @@ module ActiveConcurrency
       @pool.map(&:exit)
     end
 
-    def enqueue(*args, &block)
-      @scheduler.enqueue(*args, &block)
+    def schedule(*args, &block)
+      @scheduler.schedule(*args, &block)
     end
 
     def join
@@ -31,7 +31,8 @@ module ActiveConcurrency
     end
 
     def shutdown
-      @pool.map(&:shutdown)
+      exit
+      join
     end
 
     def statuses

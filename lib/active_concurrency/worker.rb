@@ -9,9 +9,9 @@ module ActiveConcurrency
     attr_reader :name, :queue, :thread
 
     def initialize(name: SecureRandom.uuid)
-      @name = name
+      @name = "worker_#{name}"
       @queue = Queue.new
-      @thread = Thread.new("worker_#{name}") { perform }
+      @thread = Thread.new(@name) { perform }
     end
 
     def clear

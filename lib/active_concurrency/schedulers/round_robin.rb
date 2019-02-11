@@ -8,8 +8,8 @@ module ActiveConcurrency
         @worker = pool.cycle
       end
 
-      def enqueue(*args, &block)
-        @worker.next.enqueue(*args, &block)
+      def schedule(*args, &block)
+        @worker.next.schedule(*args, &block)
       end
 
     end
