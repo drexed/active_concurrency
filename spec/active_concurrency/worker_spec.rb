@@ -15,9 +15,9 @@ RSpec.describe ActiveConcurrency::Worker do
     end
   end
 
-  describe '.done' do
+  describe '.exit' do
     it 'returns 1 scheduled job' do
-      worker.done
+      worker.exit
 
       expect(worker.size).to eq(1)
     end
@@ -27,7 +27,7 @@ RSpec.describe ActiveConcurrency::Worker do
     it 'returns an array with all "job_*" in it' do
       Thread.new do
         schedule_jobs(2)
-        worker.done
+        worker.exit
       end
 
       worker.join
@@ -79,7 +79,7 @@ RSpec.describe ActiveConcurrency::Worker do
     it 'returns false status' do
       Thread.new do
         schedule_jobs(2)
-        worker.done
+        worker.exit
       end
 
       worker.join

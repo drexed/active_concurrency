@@ -6,7 +6,7 @@ require 'thread'
 module ActiveConcurrency
   class Worker
 
-    attr_reader :name
+    attr_reader :name, :queue, :thread
 
     def initialize(name: SecureRandom.uuid)
       @name = name
@@ -18,7 +18,7 @@ module ActiveConcurrency
       @queue.clear
     end
 
-    def done
+    def exit
       schedule { throw :exit }
     end
 
@@ -35,7 +35,7 @@ module ActiveConcurrency
     end
 
     def shutdown
-      done
+      exit
       join
     end
 

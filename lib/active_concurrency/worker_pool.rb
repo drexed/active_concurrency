@@ -4,7 +4,7 @@ module ActiveConcurrency
   class WorkerPool
 
     def initialize(size: 2, scheduler: Schedulers::RoundRobin, options: {})
-      @pool = Array.new(size) { |n| Worker.new(name: "worker_#{n}") }
+      @pool = Array.new(size) { |n| Worker.new(name: n) }
       @scheduler = scheduler.new(@pool, options: options)
     end
 
@@ -12,13 +12,11 @@ module ActiveConcurrency
       @pool.map(&:clear)
     end
 
-    def done
-      enqueue { :done }
+    def exit
+      @pool.map(&:exit)
     end
 
     def enqueue(*args, &block)
-      return shutdown if block == :done
-
       @scheduler.enqueue(*args, &block)
     end
 
