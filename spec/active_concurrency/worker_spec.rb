@@ -15,6 +15,38 @@ RSpec.describe ActiveConcurrency::Worker do
     end
   end
 
+  describe '.closed?' do
+    it 'returns false' do
+      expect(worker.closed?).to eq(false)
+    end
+
+    it 'returns true' do
+      worker.close
+
+      expect(worker.closed?).to eq(true)
+    end
+  end
+
+  describe '.empty?' do
+    it 'returns true' do
+      expect(worker.empty?).to eq(true)
+    end
+
+    it 'returns false on first enqueue' do
+      schedule_jobs(2)
+
+      expect(worker.empty?).to eq(false)
+    end
+
+    it 'returns true on first enqueue' do
+      schedule_jobs(2)
+      worker.exit
+      worker.join
+
+      expect(worker.empty?).to eq(true)
+    end
+  end
+
   describe '.exit' do
     it 'returns 1 scheduled job' do
       worker.exit

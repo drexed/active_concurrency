@@ -16,8 +16,22 @@ module ActiveConcurrency
       @pool.map(&:clear)
     end
 
+    def close
+      @pool.map(&:close)
+    end
+
+    def closed
+      @pool.each_with_object({}) do |w, h|
+        h[w.name] = w.closed?
+      end
+    end
+
     def exit
       @pool.map(&:exit)
+    end
+
+    def exit!
+      @pool.map(&:exit!)
     end
 
     def schedule(*args, &block)
@@ -35,7 +49,7 @@ module ActiveConcurrency
     end
 
     def shutdown
-      exit && join
+      @pool.map(&:shutdown)
     end
 
     def statuses
