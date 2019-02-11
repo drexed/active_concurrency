@@ -3,7 +3,7 @@
 module ActiveConcurrency
   class WorkerPool
 
-    DEFAULT_SCHEDULER ||= ActiveConcurrency::Schedulers::RoundRobin
+    DEFAULT_SCHEDULER ||= ActiveConcurrency::Schedulers::LeastBusy
 
     attr_reader :pool
 
