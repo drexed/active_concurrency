@@ -3,7 +3,7 @@
 require 'spec_helper'
 
 RSpec.describe ActiveConcurrency::Worker do
-  let(:worker) { ActiveConcurrency::Worker.new(name: 'worker_0') }
+  let(:worker) { ActiveConcurrency::Worker.new(name: 0) }
   let(:results) { [] }
 
   describe '.clear' do
@@ -24,7 +24,7 @@ RSpec.describe ActiveConcurrency::Worker do
   end
 
   describe '.join' do
-    it 'returns an array with all "job_*" in it' do
+    it 'returns [0, 1]' do
       Thread.new do
         schedule_jobs(2)
         worker.exit
@@ -32,7 +32,7 @@ RSpec.describe ActiveConcurrency::Worker do
 
       worker.join
 
-      expect(results).to eq(%w[job_0 job_1])
+      expect(results).to eq([0, 1])
     end
   end
 
@@ -63,11 +63,11 @@ RSpec.describe ActiveConcurrency::Worker do
   end
 
   describe '.shutdown' do
-    it 'returns an array with all "job_*" in it' do
+    it 'returns [0, 1]' do
       schedule_jobs(2)
       worker.shutdown
 
-      expect(results).to eq(%w[job_0 job_1])
+      expect(results).to eq([0, 1])
     end
   end
 

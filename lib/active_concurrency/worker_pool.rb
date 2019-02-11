@@ -3,9 +3,13 @@
 module ActiveConcurrency
   class WorkerPool
 
-    def initialize(size: 2, scheduler: Schedulers::RoundRobin, options: {})
+    DEFAULT_SCHEDULER ||= ActiveConcurrency::Schedulers::RoundRobin
+
+    attr_reader :pool
+
+    def initialize(size: 2, scheduler: DEFAULT_SCHEDULER, **options)
       @pool = Array.new(size) { |n| Worker.new(name: n) }
-      @scheduler = scheduler.new(@pool, options: options)
+      @scheduler = scheduler.new(@pool, options)
     end
 
     def clear

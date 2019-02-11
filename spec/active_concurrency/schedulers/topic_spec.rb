@@ -2,36 +2,30 @@
 
 require 'spec_helper'
 
-RSpec.describe ActiveConcurrency::WorkerPool do
-  let(:scheduler) do
-    {
-      type: ActiveConcurrency::Schedulers::Topic,
-      topics: %w[topic_0 topic_1]
-    }
-  end
-  let(:pool) { ActiveConcurrency::WorkerPool.new(10, scheduler: scheduler) }
+RSpec.describe ActiveConcurrency::Schedulers::Topic do
   let(:results) { {} }
+  let(:pool) do
+    ActiveConcurrency::WorkerPool.new(
+      size: 10,
+      scheduler: ActiveConcurrency::Schedulers::Topic,
+      topics: %w[topic_1 topic_2 topic_3]
+    )
+  end
 
   let(:result_pool) do
     {
-      'worker_0'=>2, 'worker_1'=>1, 'worker_2'=>1,
-      'worker_3'=>1, 'worker_4'=>1, 'worker_5'=>1,
-      'worker_6'=>1, 'worker_7'=>1, 'worker_8'=>1,
-      'worker_9'=>2
+      'worker_0'=>0, 'worker_1'=>5, 'worker_2'=>0,
+      'worker_3'=>0, 'worker_4'=>4, 'worker_5'=>0,
+      'worker_6'=>0, 'worker_7'=>4, 'worker_8'=>0,
+      'worker_9'=>0
     }
   end
 
   describe '.size' do
-    it 'returns hash with 10 enqueued workers and properly spread jobs' do
-      enqueue_pool(12)
+    it 'returns hash with 10 scheduled workers and 13 jobs spread sequentially over workers 1,4,7' do
+      schedule_pool_jobs(13, 'topic_2')
 
-      expect(pool.size).to eq(result_pool)
-    end
-  end
-
-  def enqueue_pool(number_of_pools)
-    number_of_pools.times do |n|
-      pool << -> { results[n] = 'pool_#{n}' }
+      expect(pool.sizes).to eq(result_pool)
     end
   end
 

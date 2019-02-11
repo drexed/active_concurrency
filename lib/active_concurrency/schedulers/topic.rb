@@ -4,19 +4,18 @@ module ActiveConcurrency
   module Schedulers
     class Topic
 
-      def initialize(pool, options: {})
-        @pool = {}
-
-        pool_per_topic = pool.size / topics.size
-        pool.each_slice(pool_per_topic).each_with_index do |slice, index|
-          topic = topics[index]
-          @pool[topic] = slice
+      def initialize(pool, **options)
+        topics = options[:topics].cycle
+        @pool = pool.each_with_object({}) do |w, h|
+          topic = topics.next
+          h.key?(topic) ? (h[topic] << w) : (h[topic] = [w])
         end
       end
 
-      def schedule(job)
-        worker = @pool[job.topic].sort_by(&:size).first
-        worker << job
+      def schedule(*args, &block)
+        topic = args.pop
+        worker = @pool[topic].sort_by(&:size).first
+        worker.schedule(*args, &block)
       end
 
     end

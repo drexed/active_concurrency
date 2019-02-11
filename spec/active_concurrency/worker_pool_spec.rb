@@ -3,11 +3,16 @@
 require 'spec_helper'
 
 RSpec.describe ActiveConcurrency::WorkerPool do
-  let(:pool) { ActiveConcurrency::WorkerPool.new(size: 10) }
   let(:results) { {} }
+  let(:pool) { ActiveConcurrency::WorkerPool.new(size: 10) }
 
   let(:result_pool) do
-    (0..9).each_with_object({}) { |n, h| h["worker_#{n}"] = 0 }
+    {
+      'worker_0'=>0, 'worker_1'=>0, 'worker_2'=>0,
+      'worker_3'=>0, 'worker_4'=>0, 'worker_5'=>0,
+      'worker_6'=>0, 'worker_7'=>0, 'worker_8'=>0,
+      'worker_9'=>0
+    }
   end
 
   describe '.clear' do

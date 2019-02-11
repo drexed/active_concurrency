@@ -4,13 +4,13 @@ module ActiveConcurrency
   module Schedulers
     class LeastBusy
 
-      def initialize(pool, options: {})
+      def initialize(pool, **options)
         @pool = pool
       end
 
-      def schedule(job)
+      def schedule(*args, &block)
         worker = @pool.sort_by(&:size).first
-        worker << job
+        worker.schedule(*args, &block)
       end
 
     end
