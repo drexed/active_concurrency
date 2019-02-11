@@ -14,7 +14,7 @@ module ActiveConcurrency
 
       def schedule(*args, &block)
         topic = args.pop
-        worker = @pool[topic].sort_by(&:size).first
+        worker = @pool[topic].min_by(&:size)
         worker.schedule(*args, &block)
       end
 

@@ -10,9 +10,17 @@ Layout/EmptyLinesAroundModuleBody:
   Enabled: false
 LineLength:
   Max: 100
+Lint/RescueException:
+  Enabled: false
 Metrics/ModuleLength:
   Enabled: false
 Style/Alias:
   EnforcedStyle: prefer_alias_method
 Style/Documentation:
+  Enabled: false
+Style/ExpandPathArguments:
+  Enabled: false
+Style/RescueModifier:
+  Enabled: false
+Style/RescueStandardError:
   Enabled: false

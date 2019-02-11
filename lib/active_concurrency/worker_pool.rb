@@ -35,8 +35,7 @@ module ActiveConcurrency
     end
 
     def shutdown
-      exit
-      join
+      exit && join
     end
 
     def statuses

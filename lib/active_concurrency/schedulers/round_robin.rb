@@ -4,7 +4,7 @@ module ActiveConcurrency
   module Schedulers
     class RoundRobin
 
-      def initialize(pool, **options)
+      def initialize(pool, _options)
         @pool = pool.cycle
       end
 

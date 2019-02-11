@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'securerandom'
-require 'thread'
 
 module ActiveConcurrency
   class Worker
@@ -35,8 +34,7 @@ module ActiveConcurrency
     end
 
     def shutdown
-      exit
-      join
+      exit && join
     end
 
     def status
