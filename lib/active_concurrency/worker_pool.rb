@@ -3,64 +3,42 @@
 module ActiveConcurrency
   class WorkerPool
 
-    DEFAULT_SCHEDULER ||= {
-      type: ActiveConcurrency::Schedulers::RoundRobin
-    }.freeze
-
-    def initialize(number_of_workers, scheduler: DEFAULT_SCHEDULER)
-      @workers = Array.new(number_of_workers) { |n| ActiveConcurrency::Worker.new("worker_#{n}") }
-      @scheduler = schedule_by_type(scheduler)
+    def initialize(size: 2, scheduler: Schedulers::RoundRobin, options: {})
+      @pool = Array.new(size) { |n| Worker.new(name: "worker_#{n}") }
+      @scheduler = scheduler.new(@pool, options: options)
     end
 
     def clear
-      @workers.map(&:clear)
+      @pool.map(&:clear)
     end
 
     def done
-      enqueue(:done)
+      enqueue { :done }
     end
 
-    def enqueue(job)
-      return shutdown if job == :done
+    def enqueue(*args, &block)
+      return shutdown if block == :done
 
-      @scheduler.schedule(job)
+      @scheduler.enqueue(*args, &block)
     end
-
-    alias_method :<<, :enqueue
 
     def join
-      @workers.map(&:join)
+      @pool.map(&:join)
     end
 
-    alias_method :execute, :join
-    alias_method :wait, :join
-
     def sizes
-      @workers.each_with_object({}) do |w, h|
+      @pool.each_with_object({}) do |w, h|
         h[w.name] = w.size
       end
     end
 
-    alias_method :lengths, :sizes
-
     def shutdown
-      @workers.map(&:done)
+      @pool.map(&:shutdown)
     end
 
     def statuses
-      @workers.each_with_object({}) do |w, h|
+      @pool.each_with_object({}) do |w, h|
         h[w.name] = w.status
-      end
-    end
-
-    private
-
-    def schedule_by_type(scheduler)
-      case scheduler[:type].to_s
-      when 'ActiveConcurrency::Schedulers::Topic'
-        scheduler[:type].new(@workers, scheduler[:topics])
-      else
-        scheduler[:type].new(@workers)
       end
     end
 

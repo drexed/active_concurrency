@@ -1,14 +1,14 @@
 module QueueHelper
 
-  def enqueue_jobs(number_of_jobs)
-    number_of_jobs.times do |n|
-      worker << -> { results.push("job_#{n}") }
+  def schedule_jobs(size)
+    size.times do |n|
+      worker.schedule { results.push("job_#{n}") }
     end
   end
 
-  def enqueue_pool_jobs(number_of_pools)
-    number_of_pools.times do |n|
-      pool << -> { results[n] = fib(n) }
+  def schedule_pool_jobs(size)
+    size.times do |n|
+      pool.schedule { results[n] = fib(n) }
     end
   end
 

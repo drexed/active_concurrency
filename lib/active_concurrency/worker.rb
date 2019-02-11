@@ -1,47 +1,43 @@
 # frozen_string_literal: true
 
+require 'securerandom'
+require 'thread'
+
 module ActiveConcurrency
   class Worker
 
     attr_reader :name
 
-    def initialize(name)
+    def initialize(name: SecureRandom.uuid)
       @name = name
       @queue = Queue.new
-      @thread = Thread.new { perform }
+      @thread = Thread.new("worker_#{name}") { perform }
     end
 
     def clear
       @queue.clear
     end
 
-    def dequeue
-      @queue.pop
-    end
-
     def done
-      enqueue(:done)
+      schedule { throw :exit }
     end
-
-    alias_method :shutdown, :done
-
-    def enqueue(job)
-      @queue << job
-    end
-
-    alias_method :<<, :enqueue
 
     def join
       @thread.join
     end
 
-    alias_method :execute, :join
+    def schedule(*args, &block)
+      @queue << [block, args]
+    end
 
     def size
       @queue.size
     end
 
-    alias_method :length, :size
+    def shutdown
+      done
+      join
+    end
 
     def status
       @thread.status
@@ -50,12 +46,11 @@ module ActiveConcurrency
     private
 
     def perform
-      while (job = dequeue)
-        break if job == :done
-
-        job.call
-
-        puts "#{name} got #{job}" # only for debugging
+      catch(:exit) do
+        loop do
+          job, args = @queue.pop
+          job.call(*args)
+        end
       end
     end
 

@@ -3,12 +3,12 @@
 require 'spec_helper'
 
 RSpec.describe ActiveConcurrency::Worker do
-  let(:worker) { ActiveConcurrency::Worker.new(name: 'worker_0') }
+  let(:worker) { ActiveConcurrency::Worker.new('worker_0') }
   let(:results) { [] }
 
   describe '.clear' do
     it 'returns hash with zero workers' do
-      schedule_jobs(2)
+      enqueue_jobs(2)
       worker.clear
 
       expect(worker.size).to eq(0)
@@ -16,7 +16,7 @@ RSpec.describe ActiveConcurrency::Worker do
   end
 
   describe '.done' do
-    it 'returns 1 scheduled job' do
+    it 'returns 1 enqueued job' do
       worker.done
 
       expect(worker.size).to eq(1)
@@ -26,7 +26,7 @@ RSpec.describe ActiveConcurrency::Worker do
   describe '.join' do
     it 'returns an array with all "job_*" in it' do
       Thread.new do
-        schedule_jobs(2)
+        enqueue_jobs(2)
         worker.done
       end
 
@@ -42,32 +42,15 @@ RSpec.describe ActiveConcurrency::Worker do
     end
   end
 
-  describe '.schedule' do
-    it 'returns 2 scheduled jobs' do
-      schedule_jobs(2)
-
-      expect(worker.size).to eq(2)
-    end
-  end
-
   describe '.size' do
-    it 'returns 0 scheduled jobs' do
+    it 'returns 0 enqueued jobs' do
       expect(worker.size).to eq(0)
     end
 
-    it 'returns 2 scheduled jobs' do
-      schedule_jobs(2)
+    it 'returns 2 enqueued jobs' do
+      enqueue_jobs(2)
 
       expect(worker.size).to eq(2)
-    end
-  end
-
-  describe '.shutdown' do
-    it 'returns an array with all "job_*" in it' do
-      schedule_jobs(2)
-      worker.shutdown
-
-      expect(results).to eq(%w[job_0 job_1])
     end
   end
 
@@ -78,7 +61,7 @@ RSpec.describe ActiveConcurrency::Worker do
 
     it 'returns false status' do
       Thread.new do
-        schedule_jobs(2)
+        enqueue_jobs(2)
         worker.done
       end
 

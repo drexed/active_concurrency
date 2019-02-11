@@ -4,12 +4,12 @@ module ActiveConcurrency
   module Schedulers
     class RoundRobin
 
-      def initialize(workers)
-        @current_worker = workers.cycle
+      def initialize(pool, options: {})
+        @worker = pool.cycle
       end
 
-      def schedule(job)
-        @current_worker.next << job
+      def enqueue(*args, &block)
+        @worker.next.enqueue(*args, &block)
       end
 
     end
