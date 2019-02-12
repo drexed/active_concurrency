@@ -10,7 +10,7 @@ require 'active_concurrency/version'
   require "active_concurrency/schedulers/#{file_name}"
 end
 
-%w[worker worker_pool].each do |file_name|
+%w[forker worker worker_pool].each do |file_name|
   require "active_concurrency/#{file_name}"
 end
 
