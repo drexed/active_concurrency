@@ -14,10 +14,10 @@ RSpec.describe ActiveConcurrency::Schedulers::Topic do
 
   let(:result_pool) do
     {
-      'worker_0'=>0, 'worker_1'=>5, 'worker_2'=>0,
-      'worker_3'=>0, 'worker_4'=>4, 'worker_5'=>0,
-      'worker_6'=>0, 'worker_7'=>4, 'worker_8'=>0,
-      'worker_9'=>0
+      'threads_worker_0'=>0, 'threads_worker_1'=>5, 'threads_worker_2'=>0,
+      'threads_worker_3'=>0, 'threads_worker_4'=>4, 'threads_worker_5'=>0,
+      'threads_worker_6'=>0, 'threads_worker_7'=>4, 'threads_worker_8'=>0,
+      'threads_worker_9'=>0
     }
   end
 

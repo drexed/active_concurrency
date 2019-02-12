@@ -13,10 +13,10 @@ RSpec.describe ActiveConcurrency::Schedulers::RoundRobin do
 
   let(:result_pool) do
     {
-      'worker_0'=>2, 'worker_1'=>2, 'worker_2'=>2,
-      'worker_3'=>1, 'worker_4'=>1, 'worker_5'=>1,
-      'worker_6'=>1, 'worker_7'=>1, 'worker_8'=>1,
-      'worker_9'=>1
+      'threads_worker_0'=>2, 'threads_worker_1'=>2, 'threads_worker_2'=>2,
+      'threads_worker_3'=>1, 'threads_worker_4'=>1, 'threads_worker_5'=>1,
+      'threads_worker_6'=>1, 'threads_worker_7'=>1, 'threads_worker_8'=>1,
+      'threads_worker_9'=>1
     }
   end
 

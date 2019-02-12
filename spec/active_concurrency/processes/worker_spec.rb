@@ -6,7 +6,7 @@ RSpec.describe ActiveConcurrency::Processes::Worker do
   let(:worker) { ActiveConcurrency::Processes::Worker.new }
   let(:results) { [] }
 
-  describe '.join' do
+  describe '.shutdown' do
     it 'returns [0, 1]' do
       schedule_jobs(2)
       worker.shutdown
