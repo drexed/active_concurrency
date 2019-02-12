@@ -82,19 +82,6 @@ RSpec.describe ActiveConcurrency::Worker do
     end
   end
 
-  describe '.join' do
-    it 'returns [0, 1]' do
-      Thread.new do
-        schedule_jobs(2)
-        worker.exit
-      end
-
-      worker.join
-
-      expect(results).to eq([0, 1])
-    end
-  end
-
   describe '.size' do
     it 'returns 0 scheduled jobs' do
       expect(worker.size).to eq(0)

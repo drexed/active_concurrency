@@ -5,8 +5,6 @@ module ActiveConcurrency
 
     DEFAULT_SCHEDULER ||= ActiveConcurrency::Schedulers::LeastBusy
 
-    attr_reader :pool
-
     def initialize(size: 2, scheduler: DEFAULT_SCHEDULER, **options)
       @pool = Array.new(size) { |n| Worker.new(name: n) }
       @scheduler = scheduler.new(@pool, options)

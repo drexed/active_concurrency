@@ -5,7 +5,7 @@ require 'securerandom'
 module ActiveConcurrency
   class Worker
 
-    attr_reader :name, :queue, :thread
+    attr_reader :name
     attr_accessor :mutex
 
     def initialize(name: SecureRandom.uuid)
@@ -43,9 +43,9 @@ module ActiveConcurrency
     end
 
     def lock
-      return true if @mutex.nil? || @mutex.locked?
+      return true if mutex.nil? || mutex.locked?
 
-      @mutex.lock
+      mutex.lock
     end
 
     def schedule(*args, &block)
@@ -70,20 +70,26 @@ module ActiveConcurrency
 
     private
 
+    def process
+      job, args = @queue.pop
+
+      if mutex.nil?
+        job.call(*args)
+      else
+        mutex.synchronize { job.call(*args) }
+      end
+    end
+
     def perform
       catch(:exit) do
         loop do
           break if closed?
 
-          job, args = @queue.pop
-
-          if @mutex.nil?
-            job.call(*args)
-          else
-            @mutex.synchronize { job.call(*args) }
+          begin
+            process
+          rescue Exception => e
+            puts "Exception: #{e.message}\n#{e.backtrace}"
           end
-
-          break if empty?
         end
       end
     end
