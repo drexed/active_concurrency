@@ -10,7 +10,7 @@ module ActiveConcurrency
     def initialize(name: SecureRandom.uuid)
       @name = "worker_#{name}"
       @queue = Queue.new
-      @thread = spawn
+      @thread = Thread.new(@name) { perform }
     end
 
     def clear
@@ -68,10 +68,6 @@ module ActiveConcurrency
           job.call(*args)
         end
       end
-    end
-
-    def spawn
-      Thread.new(@name) { perform }
     end
 
   end
