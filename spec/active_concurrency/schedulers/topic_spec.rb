@@ -5,7 +5,7 @@ require 'spec_helper'
 RSpec.describe ActiveConcurrency::Schedulers::Topic do
   let(:results) { {} }
   let(:pool) do
-    ActiveConcurrency::WorkerPool.new(
+    ActiveConcurrency::Threads::Pool.new(
       size: 10,
       scheduler: ActiveConcurrency::Schedulers::Topic,
       topics: %w[topic_1 topic_2 topic_3]

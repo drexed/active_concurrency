@@ -5,7 +5,7 @@ require 'spec_helper'
 RSpec.describe ActiveConcurrency::Schedulers::LeastBusy do
   let(:results) { {} }
   let(:pool) do
-    ActiveConcurrency::WorkerPool.new(
+    ActiveConcurrency::Threads::Pool.new(
       size: 10,
       scheduler: ActiveConcurrency::Schedulers::LeastBusy
     )

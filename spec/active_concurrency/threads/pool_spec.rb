@@ -2,9 +2,9 @@
 
 require 'spec_helper'
 
-RSpec.describe ActiveConcurrency::WorkerPool do
+RSpec.describe ActiveConcurrency::Threads::Pool do
   let(:results) { {} }
-  let(:pool) { ActiveConcurrency::WorkerPool.new(size: 10) }
+  let(:pool) { ActiveConcurrency::Threads::Pool.new(size: 10) }
 
   let(:result_pool) do
     {

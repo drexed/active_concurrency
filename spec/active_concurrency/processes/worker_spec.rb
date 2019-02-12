@@ -2,8 +2,8 @@
 
 require 'spec_helper'
 
-RSpec.describe ActiveConcurrency::Forker do
-  let(:worker) { ActiveConcurrency::Forker.new }
+RSpec.describe ActiveConcurrency::Processes::Worker do
+  let(:worker) { ActiveConcurrency::Processes::Worker.new }
   let(:results) { [] }
 
   describe '.join' do
