@@ -5,7 +5,8 @@ module ActiveConcurrency
     class RoundRobin
 
       def initialize(pool, _options)
-        @pool = pool.cycle
+        mutex = Mutex.new
+        @pool = pool.each { |w| w.mutex = mutex }.cycle
       end
 
       def schedule(*args, &block)

@@ -6,8 +6,7 @@ module ActiveConcurrency
 
       def initialize(pool, _options)
         mutex = Mutex.new
-        @pool = pool
-        @pool.each { |w| w.mutex = mutex }
+        @pool = pool.each { |w| w.mutex = mutex }
       end
 
       def schedule(*args, &block)
