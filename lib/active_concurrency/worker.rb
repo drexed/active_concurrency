@@ -42,6 +42,12 @@ module ActiveConcurrency
       @thread.join
     end
 
+    def lock
+      return true if @mutex.nil? || @mutex.locked?
+
+      @mutex.lock
+    end
+
     def schedule(*args, &block)
       @queue << [block, args]
     end
@@ -51,7 +57,11 @@ module ActiveConcurrency
     end
 
     def shutdown
-      exit && join && close && exit!
+      exit
+      lock
+      join
+      close
+      exit!
     end
 
     def status
