@@ -5,7 +5,9 @@ module ActiveConcurrency
     class LeastBusy
 
       def initialize(pool, _options)
+        mutex = Mutex.new
         @pool = pool
+        @pool.each { |w| w.mutex = mutex }
       end
 
       def schedule(*args, &block)

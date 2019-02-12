@@ -6,6 +6,7 @@ module ActiveConcurrency
   class Worker
 
     attr_reader :name, :queue, :thread
+    attr_accessor :mutex
 
     def initialize(name: SecureRandom.uuid)
       @name = "worker_#{name}"
@@ -65,7 +66,14 @@ module ActiveConcurrency
           break if closed?
 
           job, args = @queue.pop
-          job.call(*args)
+
+          if @mutex.nil?
+            job.call(*args)
+          else
+            @mutex.synchronize { job.call(*args) }
+          end
+
+          break if empty?
         end
       end
     end
