@@ -41,6 +41,10 @@ module ActiveConcurrency
         @pool.map(&:join)
       end
 
+      def lock
+        @pool.map(&:lock)
+      end
+
       def sizes
         @pool.each_with_object({}) do |w, h|
           h[w.name] = w.size
