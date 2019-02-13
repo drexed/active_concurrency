@@ -35,7 +35,7 @@ module ActiveConcurrency
       end
 
       def lock
-        return true if mutex.nil? || mutex.locked?
+        return true if process? || mutex.nil? || mutex.locked?
 
         mutex.lock
       end
@@ -61,7 +61,7 @@ module ActiveConcurrency
       def execute
         job, args = @queue.pop
 
-        if mutex.nil?
+        if mutex.nil? || process?
           job.call(*args)
         else
           mutex.synchronize { job.call(*args) }
@@ -69,8 +69,10 @@ module ActiveConcurrency
       end
 
       def prefix
-        klass = self.class.name.split('::')[1]
-        klass.downcase
+        @prefix ||= begin
+          klass = self.class.name.split('::')[1]
+          klass.downcase
+        end
       end
 
       def perform
@@ -82,9 +84,18 @@ module ActiveConcurrency
               execute
             rescue Exception => e
               puts "#{e.class.name}: #{e.message}"
+              puts "#{e.backtrace.join("\n")}"
             end
           end
         end
+      end
+
+      def process?
+        prefix == 'processes'
+      end
+
+      def thread?
+        prefix == 'threads'
       end
 
     end
