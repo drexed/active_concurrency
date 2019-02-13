@@ -4,6 +4,7 @@ require 'spec_helper'
 
 RSpec.describe ActiveConcurrency::Threads::Worker do
   let(:worker) { ActiveConcurrency::Threads::Worker.new(name: 0) }
+
   let(:results) { [] }
 
   describe '.clear' do

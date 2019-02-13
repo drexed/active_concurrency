@@ -3,7 +3,6 @@
 require 'spec_helper'
 
 RSpec.describe ActiveConcurrency::Schedulers::Topic do
-  let(:results) { {} }
   let(:pool) do
     ActiveConcurrency::Threads::Pool.new(
       size: 10,
@@ -12,6 +11,7 @@ RSpec.describe ActiveConcurrency::Schedulers::Topic do
     )
   end
 
+  let(:results) { {} }
   let(:worker_pool) do
     {
       'threads_worker_0'=>0, 'threads_worker_1'=>5, 'threads_worker_2'=>0,
