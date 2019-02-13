@@ -6,14 +6,6 @@ RSpec.describe ActiveConcurrency::Threads::Worker do
   let(:worker) { ActiveConcurrency::Threads::Worker.new }
   let(:results) { [] }
 
-  describe '.exit' do
-    it 'returns 1 scheduled job' do
-      worker.exit
-
-      expect(worker.size).to eq(1)
-    end
-  end
-
   describe '.join' do
     it 'returns [0, 1]' do
       Thread.new do

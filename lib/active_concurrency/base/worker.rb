@@ -9,8 +9,8 @@ module ActiveConcurrency
       attr_reader :name
       attr_accessor :mutex
 
-      def initialize(name: SecureRandom.uuid)
-        @name = "#{prefix}_worker_#{name}"
+      def initialize(name: nil)
+        @name = "#{prefix}_worker_#{name || SecureRandom.uuid}"
         @queue = Queue.new
       end
 
@@ -30,6 +30,10 @@ module ActiveConcurrency
         @queue.empty?
       end
 
+      def exit
+        schedule { throw :exit }
+      end
+
       def lock
         return true if mutex.nil? || mutex.locked?
 
@@ -38,6 +42,14 @@ module ActiveConcurrency
 
       def schedule(*args, &block)
         @queue << [block, args]
+      end
+
+      def shutdown
+        exit
+        lock
+        join
+        close
+        exit!
       end
 
       def size
@@ -61,17 +73,17 @@ module ActiveConcurrency
         klass.downcase
       end
 
-      def process
-        loop do
-          break if closed? || empty?
+      def perform
+        catch(:exit) do
+          loop do
+            break if closed? || empty?
 
-          begin
-            execute
-          rescue Exception => e
-            puts "#{e.class.name}: #{e.message}"
+            begin
+              execute
+            rescue Exception => e
+              puts "#{e.class.name}: #{e.message}"
+            end
           end
-
-          # break if empty?
         end
       end
 

@@ -47,6 +47,14 @@ RSpec.describe ActiveConcurrency::Threads::Worker do
     end
   end
 
+  describe '.exit' do
+    it 'returns 1 scheduled job' do
+      worker.exit
+
+      expect(worker.size).to eq(1)
+    end
+  end
+
   describe '.name' do
     it 'return "worker_0" name' do
       expect(worker.name).to eq('threads_worker_0')

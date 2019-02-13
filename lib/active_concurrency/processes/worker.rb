@@ -4,17 +4,13 @@ module ActiveConcurrency
   module Processes
     class Worker < ActiveConcurrency::Base::Worker
 
-      def initialize(name: SecureRandom.uuid)
+      def initialize(name: nil)
         super(name: name)
         @status = 'run'
       end
 
-      def exit
-        schedule { throw :exit }
-      end
-
       def exit!
-        Process.waitpid(@process)
+        Process.waitpid(@process) unless @process.nil?
         @status = false
       end
 
@@ -25,20 +21,8 @@ module ActiveConcurrency
         end
       end
 
-      def shutdown
-        lock
-        join
-        exit!
-      end
-
       def status
         @status
-      end
-
-      private
-
-      def perform
-        catch('HUP') { process }
       end
 
     end

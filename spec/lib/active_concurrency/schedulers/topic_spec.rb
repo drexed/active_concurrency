@@ -23,7 +23,7 @@ RSpec.describe ActiveConcurrency::Schedulers::Topic do
 
   describe '.size' do
     it 'returns hash with 10 scheduled workers and 13 jobs spread sequentially over workers 1,4,7' do
-      schedule_pool_jobs(13, 'topic_2')
+      schedule_pool_jobs(13, args: %w[topic_2])
 
       expect(pool.sizes).to eq(worker_pool)
     end
