@@ -4,6 +4,8 @@ module ActiveConcurrency
   module Processes
     class Worker < ActiveConcurrency::Base::Worker
 
+      attr_reader :status
+
       def initialize(name: nil)
         super(name: name)
         @status = 'run'
@@ -19,10 +21,6 @@ module ActiveConcurrency
           perform
           at_exit { exit! }
         end
-      end
-
-      def status
-        @status
       end
 
     end

@@ -10,17 +10,23 @@ detectors:
     enabled: false
   FeatureEnvy:
     enabled: false
+  InstanceVariableAssumption:
+    enabled: false
   IrresponsibleModule:
     enabled: false
   LongParameterList:
     enabled: false
   ManualDispatch:
     enabled: false
+  MissingSafeMethod:
+    enabled: false
   NestedIterators:
     max_allowed_nesting: 2
   NilCheck:
     enabled: false
   RepeatedConditional:
+    enabled: false
+  TooManyStatements:
     enabled: false
   UncommunicativeMethodName:
     enabled: false

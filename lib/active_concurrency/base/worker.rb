@@ -44,6 +44,7 @@ module ActiveConcurrency
         @queue << [block, args]
       end
 
+      # rubocop:disable Lint/UnreachableCode
       def shutdown
         exit
         lock
@@ -51,6 +52,7 @@ module ActiveConcurrency
         close
         exit!
       end
+      # rubocop:enable Lint/UnreachableCode
 
       def size
         @queue.size
@@ -83,8 +85,7 @@ module ActiveConcurrency
             begin
               execute
             rescue Exception => e
-              puts "#{e.class.name}: #{e.message}"
-              puts "#{e.backtrace.join("\n")}"
+              puts "#{e.class.name}: #{e.message}\n#{e.backtrace.join("\n")}"
             end
           end
         end
