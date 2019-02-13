@@ -1,6 +1,6 @@
 module FileHelpers
 
-  FILE_PATH ||= 'spec/support/test.txt'
+  FILE_PATH ||= 'spec/support/files/test.txt'
 
   def read_file
     file = File.read(FILE_PATH)

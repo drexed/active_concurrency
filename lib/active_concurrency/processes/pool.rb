@@ -3,8 +3,6 @@
 module ActiveConcurrency
   module Processes
     class Pool < ActiveConcurrency::Base::Pool
-
-
     end
   end
 end

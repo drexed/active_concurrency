@@ -29,6 +29,10 @@ module ActiveConcurrency
         @pool.map(&:exit)
       end
 
+      def exit!
+        @pool.map(&:exit!)
+      end
+
       def schedule(*args, &block)
         @scheduler.schedule(*args, &block)
       end
