@@ -38,6 +38,8 @@ unexpected errors.
 Use processes when you don't need to access an outer shared resource.
 Processes are also more memory intensive as the load an its
 own identical system, but have the added benefit of being easier to debug.
+Use the following as a guide when dealing with ActiveRecord:
+https://makandracards.com/makandra/556-test-concurrent-ruby-code
 
 Play around with both until you find the best performance mix of speed and
 memory usage. Very rarely will you find any benefit of running both together.
