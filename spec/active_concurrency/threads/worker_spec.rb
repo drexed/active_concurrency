@@ -42,12 +42,7 @@ RSpec.describe ActiveConcurrency::Threads::Worker do
     end
 
     it 'returns false status' do
-      Thread.new do
-        schedule_jobs(2)
-        worker.exit
-      end
-
-      worker.join
+      worker.shutdown
 
       expect(worker.status).to eq(false)
     end

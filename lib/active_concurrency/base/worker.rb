@@ -57,7 +57,8 @@ module ActiveConcurrency
       end
 
       def prefix
-        self.class.name.split('::')[1].downcase
+        klass = self.class.name.split('::')[1]
+        klass.downcase
       end
 
       def process

@@ -5,16 +5,18 @@ module ActiveConcurrency
     class Worker < ActiveConcurrency::Base::Worker
 
       def exit
-        pgid = Process.getpgid(@process)
-        Process.kill('HUP', -pgid)
-        Process.detach(pgid)
+        # Process.kill('HUP', -@pgid)
       end
 
       def join
-        @process = Process.fork { perform }
+        pid = Process.fork { perform }
+        Process.waitall
+        # @pgid = Process.getpgid(pid)
+        # Process.detach(@pgid)
       end
 
       def shutdown
+        lock
         join
         exit
       end
