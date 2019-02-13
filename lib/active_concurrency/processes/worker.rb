@@ -4,31 +4,40 @@ module ActiveConcurrency
   module Processes
     class Worker < ActiveConcurrency::Base::Worker
 
+      def initialize(name: SecureRandom.uuid)
+        super(name: name)
+        @status = 'run'
+      end
+
       def exit
-        # Process.kill('HUP', -@pgid)
+        schedule { throw :exit }
+      end
+
+      def exit!
+        Process.waitpid(@process)
+        @status = false
       end
 
       def join
-        pid = Process.fork { perform }
-        Process.waitall
-        # @pgid = Process.getpgid(pid)
-        # Process.detach(@pgid)
+        @process = Process.fork do
+          perform
+          at_exit { exit! }
+        end
       end
 
       def shutdown
         lock
         join
-        exit
+        exit!
       end
 
       def status
-        @process.last_status
+        @status
       end
 
       private
 
       def perform
-        Process.setsid
         catch('HUP') { process }
       end
 

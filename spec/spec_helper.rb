@@ -1,8 +1,15 @@
 # frozen_string_literal: true
 
-require 'bundler/setup'
-require 'active_concurrency'
-require 'queue_helper'
+%w[bundler/setup active_concurrency pathname].each do |file_name|
+  require file_name
+end
+
+support_path = File.expand_path('../spec/support', File.dirname(__FILE__))
+support_path = Pathname.new(support_path)
+
+%w[rspec/file_helpers.rb rspec/job_helpers.rb].each do |file_name|
+  load(support_path.join(file_name))
+end
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
@@ -16,5 +23,6 @@ RSpec.configure do |config|
   end
 
   # Custom RSpec helpers
-  config.include QueueHelper
+  config.include FileHelpers
+  config.include JobHelpers
 end

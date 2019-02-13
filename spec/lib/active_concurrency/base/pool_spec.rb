@@ -6,7 +6,7 @@ RSpec.describe ActiveConcurrency::Threads::Pool do
   let(:results) { {} }
   let(:pool) { ActiveConcurrency::Threads::Pool.new(size: 10) }
 
-  let(:result_pool) do
+  let(:worker_pool) do
     {
       'threads_worker_0'=>0, 'threads_worker_1'=>0, 'threads_worker_2'=>0,
       'threads_worker_3'=>0, 'threads_worker_4'=>0, 'threads_worker_5'=>0,
@@ -20,28 +20,28 @@ RSpec.describe ActiveConcurrency::Threads::Pool do
       schedule_pool_jobs(2)
       pool.clear
 
-      expect(pool.sizes).to eq(result_pool)
+      expect(pool.sizes).to eq(worker_pool)
     end
   end
 
   describe '.sizes' do
     it 'returns hash with 10 scheduled workers and 0 jobs' do
-      expect(pool.sizes).to eq(result_pool)
+      expect(pool.sizes).to eq(worker_pool)
     end
 
     it 'returns hash with 10 scheduled workers and 2 jobs' do
       schedule_pool_jobs(2)
-      update_result_hash(result_pool, '=', 1, break_i: 1)
+      update_worker_pool(worker_pool, '=', 1, break_i: 1)
 
-      expect(pool.sizes).to eq(result_pool)
+      expect(pool.sizes).to eq(worker_pool)
     end
   end
 
   describe '.statuses' do
     it 'returns hash with 10 scheduled workers and "run" status' do
-      update_result_hash(result_pool, '=', 'run')
+      update_worker_pool(worker_pool, '=', 'run')
 
-      expect(pool.statuses).to eq(result_pool)
+      expect(pool.statuses).to eq(worker_pool)
     end
 
     it 'returns hash with 10 scheduled workers and false status' do
@@ -51,9 +51,9 @@ RSpec.describe ActiveConcurrency::Threads::Pool do
       end
 
       pool.join
-      update_result_hash(result_pool, '=', false)
+      update_worker_pool(worker_pool, '=', false)
 
-      expect(pool.statuses).to eq(result_pool)
+      expect(pool.statuses).to eq(worker_pool)
     end
   end
 

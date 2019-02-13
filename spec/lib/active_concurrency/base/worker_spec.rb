@@ -8,7 +8,7 @@ RSpec.describe ActiveConcurrency::Threads::Worker do
 
   describe '.clear' do
     it 'returns hash with zero workers' do
-      schedule_jobs(2)
+      schedule_worker_jobs(2)
       worker.clear
 
       expect(worker.size).to eq(0)
@@ -33,13 +33,13 @@ RSpec.describe ActiveConcurrency::Threads::Worker do
     end
 
     it 'returns false on first enqueue' do
-      schedule_jobs(2)
+      schedule_worker_jobs(2)
 
       expect(worker.empty?).to eq(false)
     end
 
     it 'returns true on first enqueue' do
-      schedule_jobs(2)
+      schedule_worker_jobs(2)
       worker.exit
       worker.join
 
@@ -55,7 +55,7 @@ RSpec.describe ActiveConcurrency::Threads::Worker do
 
   describe '.schedule' do
     it 'returns 2 scheduled jobs' do
-      schedule_jobs(2)
+      schedule_worker_jobs(2)
 
       expect(worker.size).to eq(2)
     end
@@ -67,7 +67,7 @@ RSpec.describe ActiveConcurrency::Threads::Worker do
     end
 
     it 'returns 2 scheduled jobs' do
-      schedule_jobs(2)
+      schedule_worker_jobs(2)
 
       expect(worker.size).to eq(2)
     end

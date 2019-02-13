@@ -63,7 +63,7 @@ module ActiveConcurrency
 
       def process
         loop do
-          break if closed?
+          break if closed? || empty?
 
           begin
             execute
@@ -71,7 +71,7 @@ module ActiveConcurrency
             puts "#{e.class.name}: #{e.message}"
           end
 
-          break if empty?
+          # break if empty?
         end
       end
 

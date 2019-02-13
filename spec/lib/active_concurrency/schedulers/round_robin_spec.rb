@@ -11,7 +11,7 @@ RSpec.describe ActiveConcurrency::Schedulers::RoundRobin do
     )
   end
 
-  let(:result_pool) do
+  let(:worker_pool) do
     {
       'threads_worker_0'=>2, 'threads_worker_1'=>2, 'threads_worker_2'=>2,
       'threads_worker_3'=>1, 'threads_worker_4'=>1, 'threads_worker_5'=>1,
@@ -24,7 +24,7 @@ RSpec.describe ActiveConcurrency::Schedulers::RoundRobin do
     it 'returns hash with 10 scheduled workers and 13 jobs spread sequentially' do
       schedule_pool_jobs(13)
 
-      expect(pool.sizes).to eq(result_pool)
+      expect(pool.sizes).to eq(worker_pool)
     end
   end
 
