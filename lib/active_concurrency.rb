@@ -1,9 +1,5 @@
 # frozen_string_literal: true
 
-# TODO:
-# - Add more scheduling algorithm
-#   - https://www.cs.uic.edu/~jbell/CourseNotes/OperatingSystems/5_CPU_Scheduling.html
-
 require 'active_concurrency/version'
 
 %w[least_busy round_robin topic].each do |file_name|

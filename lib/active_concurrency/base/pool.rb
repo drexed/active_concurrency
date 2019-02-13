@@ -7,6 +7,7 @@ module ActiveConcurrency
       DEFAULT_SCHEDULER ||= ActiveConcurrency::Schedulers::LeastBusy
 
       def initialize(size: 2, scheduler: DEFAULT_SCHEDULER, **options)
+        size = [size, options[:topics].size].max if options.key?(:topics)
         @pool = Array.new(size) { |n| worker.new(name: n) }
         @scheduler = scheduler.new(@pool, options)
       end
